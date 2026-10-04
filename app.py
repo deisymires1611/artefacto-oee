@@ -93,19 +93,20 @@ ss = st.session_state
 
 
 def cargar_raw():
-    """Devuelve (raw, etiqueta) según la fuente elegida."""
+    """Devuelve (raw, etiqueta) según la fuente elegida.
+    No cambia la opción elegida por el usuario: si faltan archivos, solo
+    muestra la demostración mientras tanto (así no se borran los ya subidos)."""
     if ss.fuente == "carpeta":
         try:
             raw = {k: motor.leer_csv(os.path.join(DATOS, f))[0] for k, f in motor.ARCHIVOS.items()}
             raw["sep"] = ","
             return raw, "Registros de la carpeta datos/"
         except FileNotFoundError:
-            ss.fuente = "demo"
+            pass
     if ss.fuente == "subidos" and len(ss.subidos) == 3:
         raw = {k: v["df"] for k, v in ss.subidos.items()}
         raw["sep"] = ss.subidos["prod"]["sep"]
         return raw, "Registros cargados"
-    ss.fuente = "demo"
     return motor.generar_demo(), "Datos de demostración"
 
 
